@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import time
+from IPython.display import display
 
 chrome_options = Options()
 # Local chrome folder
@@ -29,7 +30,24 @@ def request_item():
     tables = soup.find_all('table')
     dfs = pd.read_html(str(tables))
     #   print(dfs[0])
-    print(dfs[0]["Location"])
+    #print(dfs[0]["Location"])
+
+    pd.set_option('display.max_rows', None) 
+    pd.set_option('display.max_columns', None) 
+    pd.set_option('display.width', 2000) 
+    pd.set_option('display.colheader_justify', 'center') 
+    pd.set_option('display.precision', 2) 
+
+    for i in range(len(dfs)):
+        df = dfs[i]        
+        df = df[df['Item'].notna()]
+        df = df.reset_index(drop=True)
+        dfs[i] = df
+
+    pageFrames = pd.concat(dfs)
+    pageFrames = pageFrames.reset_index(drop=True)
+    pageFrames = pageFrames.iloc[1:]
+    display(pageFrames)
 
     # Last step
     driver.quit()
