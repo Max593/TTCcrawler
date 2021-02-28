@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 import time
 
 chrome_options = Options()
+# Local chrome folder
+chrome_options.binary_location = './ChromeStandalone/chrome'
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
@@ -15,7 +17,7 @@ url = 'https://eu.tamrieltradecentre.com/pc/Trade/SearchResult?SearchType=Sell&I
 def request_item():
 
     # Create a new Chrome session
-    driver = webdriver.Chrome('/home/rares17/chromedriver/chromedriver', options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
 
     # Load the web page
     driver.get(url)
