@@ -29,24 +29,34 @@ def request_item():
     soup = BeautifulSoup(driver.page_source, 'lxml')
     tables = soup.find_all('table')
     dfs = pd.read_html(str(tables))
-    #   print(dfs[0])
-    #print(dfs[0]["Location"])
 
+
+    #pretty print settings
     pd.set_option('display.max_rows', None) 
     pd.set_option('display.max_columns', None) 
-    pd.set_option('display.width', 2000) 
+    pd.set_option('display.width', 5000) 
     pd.set_option('display.colheader_justify', 'center') 
     pd.set_option('display.precision', 2) 
 
+    #delete empty rows
     for i in range(len(dfs)):
         df = dfs[i]        
         df = df[df['Item'].notna()]
-        df = df.reset_index(drop=True)
         dfs[i] = df
 
-    pageFrames = pd.concat(dfs)
-    pageFrames = pageFrames.reset_index(drop=True)
-    pageFrames = pageFrames.iloc[1:]
+    pageFrames = pd.concat(dfs) #joins all tables on page
+    pageFrames = pageFrames.reset_index(drop=True) #creates a unified index
+    pageFrames = pageFrames.iloc[1:] #deletes column names
+    
+    #Final Price collumn with int values
+    prices = [] 
+    for price in pageFrames["Price"]:
+        price = price.split("=  ",1)[1]
+        price = int(price.replace(',', ''))
+        prices.append(price)
+    pageFrames["Final Price"] = prices
+    
+    
     display(pageFrames)
 
     # Last step
