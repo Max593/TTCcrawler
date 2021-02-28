@@ -17,7 +17,7 @@ url = 'https://eu.tamrieltradecentre.com/pc/Trade/SearchResult?SearchType=Sell&I
 def request_item():
 
     # Create a new Chrome session
-    driver = webdriver.Chrome(options=chrome_options)
+    driver = webdriver.Chrome('./chromedriver', options=chrome_options)
 
     # Load the web page
     driver.get(url)
