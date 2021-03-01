@@ -1,4 +1,4 @@
 from crawler import *
-
 if __name__ == '__main__':
-    request_item()
+    while 1:
+        request_item()

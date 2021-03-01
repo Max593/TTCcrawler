@@ -68,10 +68,13 @@ def request_item():
 
 
     # Testing
-    print(pageFrames.sort_values(by=['Last Seen Minutes']).head())
-
-
-    threading.Thread(target=sound_alarm()).start()
+    # print(pageFrames.sort_values(by=['Last Seen Minutes']).head())
+    pageFrames = pageFrames.sort_values(by=['Final Price'])
+    result = pageFrames[pageFrames["Last Seen Minutes"] == 0].head()
+    if len(result) > 0:
+        print(result)
+        threading.Thread(target=sound_alarm()).start()
 
     # Last step
     driver.quit()
+    time.sleep(300)
