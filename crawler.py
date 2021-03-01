@@ -1,6 +1,8 @@
 import pandas as pd
 import time
+import threading
 from conversions import *
+from alarm import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
@@ -14,7 +16,7 @@ chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
 
 url = 'https://eu.tamrieltradecentre.com/pc/Trade/SearchResult?SearchType=Sell&ItemID=&ItemNamePattern=mother%27s+sorrow&ItemCategory1ID=&ItemTraitID=&ItemQualityID=&IsChampionPoint=false&LevelMin=&LevelMax=&MasterWritVoucherMin=&MasterWritVoucherMax=&AmountMin=&AmountMax=&PriceMin=&PriceMax='
-
+testingUrl = 'https://eu.tamrieltradecentre.com/pc/Trade/SearchResult?SearchType=Sell&ItemID=&ItemNamePattern=Mother%27s+Sorrow&ItemCategory1ID=1&ItemCategory2ID=2&ItemCategory3ID=18&ItemTraitID=13&ItemQualityID=&IsChampionPoint=true&IsChampionPoint=false&LevelMin=160&LevelMax=&MasterWritVoucherMin=&MasterWritVoucherMax=&AmountMin=&AmountMax=&PriceMin=&PriceMax=20000'
 
 def request_item():
 
@@ -22,7 +24,7 @@ def request_item():
     driver = webdriver.Chrome('./chromedriver', options=chrome_options)
 
     # Load the web page
-    driver.get(url)
+    driver.get(testingUrl)
 
     # Wait for the page to fully load
     #driver.implicitly_wait(10)
@@ -30,7 +32,6 @@ def request_item():
     soup = BeautifulSoup(driver.page_source, 'lxml')
     tables = soup.find_all('table')
     dfs = pd.read_html(str(tables))
-
 
     #pretty print settings
     pd.set_option('display.max_rows', None) 
@@ -40,12 +41,14 @@ def request_item():
     pd.set_option('display.precision', 2) 
 
     # delete empty rows
-    for i in range(len(dfs)):
-        df = dfs[i]        
-        df = df[df['Item'].notna()]
-        dfs[i] = df
+    # for i in range(len(dfs)):
+    #    df = dfs[i]
+    #    df = df[df['Item'].notna()]
+    #    dfs[i] = df
 
-    pageFrames = pd.concat(dfs) # Joins all tables on page
+    pageFrames = dfs[0]
+    pageFrames = pageFrames[pageFrames['Item'].notna()]
+    # pageFrames = pd.concat(dfs) # Joins all tables on page
     pageFrames = pageFrames.reset_index(drop=True) # Creates a unified index
     pageFrames = pageFrames.iloc[1:] # Deletes column names
     
@@ -62,6 +65,13 @@ def request_item():
     pageFrames["Last Seen Minutes"] = last_seen_minutes
 
     display(pageFrames)
+
+
+    # Testing
+    print(pageFrames.sort_values(by=['Last Seen Minutes']).head())
+
+
+    threading.Thread(target=sound_alarm()).start()
 
     # Last step
     driver.quit()
