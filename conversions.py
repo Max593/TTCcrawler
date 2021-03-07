@@ -1,4 +1,5 @@
 from pandas import DataFrame
+from IPython.display import display
 # Dictionary for conversions to minutes
 time_dict = {
     "Minute": 1,
@@ -25,8 +26,11 @@ def time_to_int(time: str):
 # data frame difference
 def dataframe_difference(df1: DataFrame, df2: DataFrame, which=None):
     """Find rows which are different between two DataFrames."""
-    comparison_df = df1.merge(
-        df2,
+    # We remove the "time" columns to make sure we can see differences
+    reduced1 = df1.drop(['Last Seen', 'Last Seen Minutes'], axis=1)
+    reduced2 = df2.drop(['Last Seen', 'Last Seen Minutes'], axis=1)
+    comparison_df = reduced1.merge(
+        reduced2,
         indicator=True,
         how='outer'
     )

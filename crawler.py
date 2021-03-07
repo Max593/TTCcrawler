@@ -4,6 +4,7 @@ import threading
 
 from conversions import *
 from alarm import *
+from os import system
 
 import pandas as pd
 from selenium import webdriver
@@ -40,7 +41,7 @@ class Crawler:
             driver.get(self.searchUrl)
             # Wait for the page to fully load
             # driver.implicitly_wait(10)
-            time.sleep(5)
+            time.sleep(10)
 
             soup = BeautifulSoup(driver.page_source, 'lxml')
             tables = soup.find_all('table')
@@ -69,10 +70,12 @@ class Crawler:
             pageFrames["Last Seen Minutes"] = last_seen_minutes
 
             # Pretty printing
-            # display(pageFrames)
+            print("\n\n*-----------------------------------------------------*")
+            display(pageFrames)
 
             if previousFrames is not None:
                 resultFrames = dataframe_difference(pageFrames, previousFrames, which='left_only')
+                print("-------------------------------------------------------")
                 if resultFrames.empty is False:
                     # display new items
                     display(resultFrames)
@@ -84,8 +87,10 @@ class Crawler:
                 else:
                     # timestamp to notify the user when was the last time a request took place
                     print("No new queries found in this search. ", datetime.datetime.now())
+
+            print("*-----------------------------------------------------*")
             # update previous dataframe for comparison
             previousFrames = pageFrames
             # close browser
             driver.quit()
-            #time.sleep(60)
+            time.sleep(15)
