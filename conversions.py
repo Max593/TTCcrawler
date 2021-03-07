@@ -1,3 +1,4 @@
+from pandas import DataFrame
 # Dictionary for conversions to minutes
 time_dict = {
     "Minute": 1,
@@ -19,5 +20,19 @@ def time_to_int(time: str):
         time = 0
     else:
         time = int(time[0]) * time_dict[time[1]]
-
     return int(time)
+
+# data frame difference
+def dataframe_difference(df1: DataFrame, df2: DataFrame, which=None):
+    """Find rows which are different between two DataFrames."""
+    comparison_df = df1.merge(
+        df2,
+        indicator=True,
+        how='outer'
+    )
+    if which is None:
+        diff_df = comparison_df[comparison_df['_merge'] != 'both']
+    else:
+        diff_df = comparison_df[comparison_df['_merge'] == which]
+    return diff_df
+
