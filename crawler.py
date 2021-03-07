@@ -10,7 +10,8 @@ from IPython.display import display
 
 chrome_options = Options()
 # Local chrome folder
-chrome_options.binary_location = './ChromeStandalone/chrome'
+#chrome_options.binary_location = 'ChromeStandalone/GoogleChromePortable.exe'
+chrome_options.binary_location = 'ChromeStandalone/App/Chrome-bin/chrome.exe'
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
@@ -18,10 +19,11 @@ chrome_options.add_argument('--disable-dev-shm-usage')
 url = 'https://eu.tamrieltradecentre.com/pc/Trade/SearchResult?SearchType=Sell&ItemID=&ItemNamePattern=mother%27s+sorrow&ItemCategory1ID=&ItemTraitID=&ItemQualityID=&IsChampionPoint=false&LevelMin=&LevelMax=&MasterWritVoucherMin=&MasterWritVoucherMax=&AmountMin=&AmountMax=&PriceMin=&PriceMax='
 testingUrl = 'https://eu.tamrieltradecentre.com/pc/Trade/SearchResult?SearchType=Sell&ItemID=&ItemNamePattern=Mother%27s+Sorrow&ItemCategory1ID=1&ItemCategory2ID=2&ItemCategory3ID=18&ItemTraitID=13&ItemQualityID=&IsChampionPoint=true&IsChampionPoint=false&LevelMin=160&LevelMax=&MasterWritVoucherMin=&MasterWritVoucherMax=&AmountMin=&AmountMax=&PriceMin=&PriceMax=20000'
 
+
 def request_item():
 
     # Create a new Chrome session
-    driver = webdriver.Chrome('./chromedriver', options=chrome_options)
+    driver = webdriver.Chrome('chromedriver.exe', options=chrome_options)
 
     # Load the web page
     driver.get(testingUrl)
