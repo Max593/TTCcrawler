@@ -8,9 +8,10 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 from IPython.display import display
 
+#simpleaudio required for alarms
+
 chrome_options = Options()
 # Local chrome folder
-#chrome_options.binary_location = 'ChromeStandalone/GoogleChromePortable.exe'
 chrome_options.binary_location = 'ChromeStandalone/App/Chrome-bin/chrome.exe'
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--no-sandbox')
@@ -72,7 +73,7 @@ def request_item():
     # Testing
     # print(pageFrames.sort_values(by=['Last Seen Minutes']).head())
     pageFrames = pageFrames.sort_values(by=['Final Price'])
-    result = pageFrames[pageFrames["Last Seen Minutes"] == 0].head()
+    result = pageFrames[pageFrames["Last Seen Minutes"] <= 10].head()
     if len(result) > 0:
         print(result)
         threading.Thread(target=sound_alarm()).start()
