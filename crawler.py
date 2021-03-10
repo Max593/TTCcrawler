@@ -1,10 +1,10 @@
 import time
 import datetime
 import threading
+import simpleaudio
 
 from conversions import *
 from alarm import *
-from os import system
 
 import pandas as pd
 from selenium import webdriver

@@ -128,3 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /ChromeStandalone/
+
+# .idea piece of shit
+.idea/
