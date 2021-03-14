@@ -94,8 +94,8 @@ class Crawler:
                 try:
                     content, found = self.request_item(i)
                     print(content[0])
-                except:
-                    print("No items found")
+                except KeyError:
+                    print("\n- No items found -\n")
                 # here we should send it over to the gui
             self.driver.switch_to.window(self.driver.window_handles[0])
             print("------------------------------")
