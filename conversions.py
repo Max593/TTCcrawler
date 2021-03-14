@@ -11,7 +11,10 @@ time_dict = {
 # price x quantity = full price becomes full price
 def price_to_int(price: str):
     price = price.split("=  ", 1)[1]
-    price = int(price.replace(',', ''))
+    price = price.replace(',', '')
+    # Some site locales have '.' instead of ',' for values such as '6,000'.
+    # We could not find why that is the case and assume it is not intended on their side.
+    price = int(price.replace('.', ''))
     return price
 
 # %d time ago = %d

@@ -20,6 +20,18 @@ from IPython.display import display
 # lxml required for selenium
 # simpleaudio required for alarms
 
+def synchronized_method(method):
+    outer_lock = threading.Lock()
+    lock_name = "__" + method.__name__ + "_lock" + "__"
+
+    def sync_method(self, *args, **kws):
+        with outer_lock:
+            if not hasattr(self, lock_name): setattr(self, lock_name, threading.Lock())
+            lock = getattr(self, lock_name)
+            with lock:
+                return method(self, *args, **kws)
+
+    return sync_method
 
 class Crawler:
 
@@ -70,7 +82,19 @@ class Crawler:
 
     def add_url(self, url: str):
         """Method that adds a url to the url array"""
-        self.urlArray.append(url)
+        if self.running is False:
+            self.urlArray.append(url)
+
+    def delete_url(self, position):
+        """Method that removes a url from the url array"""
+        if self.running is False:
+            self.urlArray.pop(position)
+
+    @synchronized_method
+    def stop_search(self):
+        """Method that starts the process of gradually stopping the search. """
+        """Note that the method is synchronized in order to pause the thread. """
+        self.running = False
 
     def request_items_from_urls(self):
         """Method that requests items from all tabs"""
@@ -101,7 +125,9 @@ class Crawler:
             print("------------------------------")
             time.sleep(2)
             self.refresh_pages()
-    
+        # Clearing saved data frames
+        self.previousFrames = []
+
 
     def request_item(self, position:int):
 
@@ -138,7 +164,7 @@ class Crawler:
         content.append(pageFrames)
         #print("\n\n*-----------------------------------------------------*")
         #display(pageFrames)
-
+        # This check is to see if it has any previous data to compare it to
         if len(self.previousFrames) == len(self.urlArray):
             resultFrames = dataframe_difference(pageFrames, self.previousFrames[position], which='left_only')
             #print("\n-------------------------------------------------------")
