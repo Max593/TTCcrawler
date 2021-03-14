@@ -3,6 +3,7 @@ import datetime
 import threading
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as ExpectedConditions
 from selenium.webdriver.common.keys import Keys
 
 from conversions import *
@@ -33,16 +34,19 @@ class Crawler:
     testingUrl = 'https://eu.tamrieltradecentre.com/pc/Trade/SearchResult?SearchType=Sell&ItemID=&ItemNamePattern=Mother%27s+Sorrow&ItemCategory1ID=1&ItemCategory2ID=2&ItemCategory3ID=18&ItemTraitID=13&ItemQualityID=&IsChampionPoint=true&IsChampionPoint=false&LevelMin=160&LevelMax=&MasterWritVoucherMin=&MasterWritVoucherMax=&AmountMin=&AmountMax=&PriceMin=&PriceMax=20000'
     fastChangingUrl = 'https://eu.tamrieltradecentre.com/pc/Trade/SearchResult?SearchType=Sell&ItemID=&ItemNamePattern=mother%27s+sorrow&ItemCategory1ID=&ItemTraitID=&ItemQualityID=&IsChampionPoint=false&LevelMin=&LevelMax=&MasterWritVoucherMin=&MasterWritVoucherMax=&AmountMin=&AmountMax=&PriceMin=&PriceMax='
 
-    def __init__(self, url):
+    def __init__(self, url=None):
         self.searchUrl = url
 
         # Local chrome folder
         self.chrome_options.binary_location = 'ChromeStandalone/App/Chrome-bin/chrome.exe'
 
-        # Setting up a Chrome session - comment for debug
-        #self.chrome_options.add_argument('--headless')
-        #self.chrome_options.add_argument('--no-sandbox')
-        #self.chrome_options.add_argument('--disable-dev-shm-usage')
+        # Setting up a Chrome session
+        debug = False
+        if not debug:
+            self.chrome_options.add_argument('--headless')
+            self.chrome_options.add_argument('--no-sandbox')
+            self.chrome_options.add_argument('--disable-dev-shm-usage')
+            print("*parameters applied*")
 
         # Create a new Chrome session
         self.driver = webdriver.Chrome('chromedriver.exe', options=self.chrome_options)
@@ -72,18 +76,27 @@ class Crawler:
         """Method that requests items from all tabs"""
         self.running = True
         while self.running is True:
-            WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located((By.ID, 'search-result-view')))
+            #time.sleep(5)
+            # pull-left load spinner
+            WebDriverWait(self.driver, 60).until(
+                ExpectedConditions.invisibility_of_element_located((By.CLASS_NAME, "pull-left load spinner")))
+            #WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located((By.ID, 'search-result-view')))
+            time.sleep(5)
             content, found = self.request_item(0)
             print(content[0])
             # here we should send it over to the gui
             for i in range(1, len(self.urlArray)):
                 self.driver.switch_to.window(self.driver.window_handles[i])
-                WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located((By.ID, 'search-result-view')))
+                WebDriverWait(self.driver, 60).until(
+                    ExpectedConditions.invisibility_of_element_located((By.CLASS_NAME, "pull-left load spinner")))
+                time.sleep(5)
+                #WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located((By.ID, 'search-result-view')))
                 content, found = self.request_item(i)
                 print(content[0])
                 # here we should send it over to the gui
             self.driver.switch_to.window(self.driver.window_handles[0])
-            time.sleep(10)
+            print("------------------------------")
+            time.sleep(2)
             self.refresh_pages()
 
 
