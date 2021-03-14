@@ -130,4 +130,6 @@ dmypy.json
 /ChromeStandalone/
 
 # .idea piece of shit
-.idea/
+**/.idea/
+**/.idea/workspace.xml
+**/.idea/tasks.xml

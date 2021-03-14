@@ -59,6 +59,7 @@ class TTCc_GUI:
 
     def new_tab(self):
         self.tab_list.append(self.Tab(self.tab_frame, f"Tab {len(self.tab_list)}"))
+        self.tab_frame.select(self.tab_frame.tabs()[-1]) # Jumps to the latest change
 
 
 root = Tk()
