@@ -24,6 +24,7 @@ class TTCc_GUI:
             text_field.pack(side=BOTTOM, expand=True, fill=BOTH)
 
             delete_tab_button = Button(top_Frame, text="Delete Tab", command=self.deleteTab)
+            self.tab_frame.select(self.tab_frame.tabs()[-1])  # Jumps to the latest change
             if self.tab_frame.index(self.tab_frame.select()) == 0:
                 delete_tab_button["state"] = "disable"
                 delete_tab_button['text'] = "Disabled"
@@ -58,8 +59,9 @@ class TTCc_GUI:
         self.tab_list.append(self.base_tab)
 
     def new_tab(self):
-        self.tab_list.append(self.Tab(self.tab_frame, f"Tab {len(self.tab_list)}"))
-        self.tab_frame.select(self.tab_frame.tabs()[-1]) # Jumps to the latest change
+        # Tabs have a temporary name for identification
+        self.tab_list.append(self.Tab(self.tab_frame, f"Tab {self.tab_frame.tabs()[-1]}"))
+        #self.tab_frame.select(self.tab_frame.tabs()[-1]) # Jumps to the latest change
 
 
 root = Tk()
