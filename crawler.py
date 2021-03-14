@@ -91,8 +91,11 @@ class Crawler:
                     ExpectedConditions.invisibility_of_element_located((By.CLASS_NAME, "pull-left load spinner")))
                 time.sleep(5)
                 #WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located((By.ID, 'search-result-view')))
-                content, found = self.request_item(i)
-                print(content[0])
+                try:
+                    content, found = self.request_item(i)
+                    print(content[0])
+                except:
+                    print("No items found")
                 # here we should send it over to the gui
             self.driver.switch_to.window(self.driver.window_handles[0])
             print("------------------------------")
