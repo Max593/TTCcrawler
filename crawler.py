@@ -95,24 +95,17 @@ class Crawler:
                     content, found = self.request_item(i)
                     print(content[0])
                 except KeyError:
-                    print("\n- No items found -\n")
+                    print("\n- Either no items were found, or the page failed to load in time. -\n")
                 # here we should send it over to the gui
             self.driver.switch_to.window(self.driver.window_handles[0])
             print("------------------------------")
             time.sleep(2)
             self.refresh_pages()
-
+    
 
     def request_item(self, position:int):
 
-        # while 1:
-        # driver.execute_script("window.open();")
-        # driver.switch_to_window(driver.window_handles[0])
-        # Load the web page
-        # self.driver.get(self.searchUrl)
-        # Wait for the page to fully load
-        # driver.implicitly_wait(10)
-        # time.sleep(10)
+        # read all tables from html
         content = []
         found = False
         soup = BeautifulSoup(self.driver.page_source, 'lxml')
