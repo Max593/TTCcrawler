@@ -1,9 +1,11 @@
 from tkinter import *
 from tkinter import ttk
-from tab import Tab
+from .tab import Tab
+
+from observer_paradigm import Observer, Subject
 
 
-class TTCc_GUI:
+class TTCc_GUI(Observer):
     def __init__(self, master):
         self.master = master
         self.master.title("TCCcrawler")
@@ -33,6 +35,8 @@ class TTCc_GUI:
         # Tabs have a temporary name for identification
         self.tab_list.append(Tab(self.tab_frame, f"Tab {self.tab_frame.tabs()[-1]}"))
 
+    def update(self, subject: Subject) -> None:
+        print("ConcreteObserverA: Reacted to the event")
 
 root = Tk()
 my_gui = TTCc_GUI(root)

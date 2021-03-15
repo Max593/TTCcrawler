@@ -1,7 +1,7 @@
 import time
 import datetime
 import threading
-
+from typing import List
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ExpectedConditions
 from selenium.webdriver.common.keys import Keys
@@ -19,6 +19,8 @@ from bs4 import BeautifulSoup
 from IPython.display import display
 # lxml required for selenium
 # simpleaudio required for alarms
+from observer_paradigm import Subject, Observer
+
 
 def synchronized_method(method):
     outer_lock = threading.Lock()
@@ -33,7 +35,7 @@ def synchronized_method(method):
 
     return sync_method
 
-class Crawler:
+class Crawler(Subject):
 
     # Initiating null variables
     searchUrl = None
@@ -42,6 +44,7 @@ class Crawler:
     urlArray = []
     previousFrames = []
     chrome_options = Options()
+    _observers: List[Observer] = []
 
     testingUrl = 'https://eu.tamrieltradecentre.com/pc/Trade/SearchResult?SearchType=Sell&ItemID=&ItemNamePattern=Mother%27s+Sorrow&ItemCategory1ID=1&ItemCategory2ID=2&ItemCategory3ID=18&ItemTraitID=13&ItemQualityID=&IsChampionPoint=true&IsChampionPoint=false&LevelMin=160&LevelMax=&MasterWritVoucherMin=&MasterWritVoucherMax=&AmountMin=&AmountMax=&PriceMin=&PriceMax=20000'
     fastChangingUrl = 'https://eu.tamrieltradecentre.com/pc/Trade/SearchResult?SearchType=Sell&ItemID=&ItemNamePattern=mother%27s+sorrow&ItemCategory1ID=&ItemTraitID=&ItemQualityID=&IsChampionPoint=false&LevelMin=&LevelMax=&MasterWritVoucherMin=&MasterWritVoucherMax=&AmountMin=&AmountMax=&PriceMin=&PriceMax='
@@ -190,3 +193,22 @@ class Crawler:
         # close browser
         # self.driver.quit()
 
+    def attach(self, observer: Observer) -> None:
+        print("Subject: Attached an observer.")
+        self._observers.append(observer)
+
+    def detach(self, observer: Observer) -> None:
+        self._observers.remove(observer)
+
+    """
+    The subscription management methods.
+    """
+
+    def notify(self) -> None:
+        """
+        Trigger an update in each subscriber.
+        """
+
+        print("Subject: Notifying observers...")
+        for observer in self._observers:
+            observer.update(self)
