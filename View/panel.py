@@ -47,7 +47,7 @@ class TTCc_GUI(Observer):
                 url_list.append(tab.url_field.get())
                 # print(tab.url_field.get())
             self.crawler.add_url(urls = url_list)
-            self.t = threading.Thread(target=self.crawler.request_items_from_urls())
+            self.t = threading.Thread(target=self.crawler.request_items_from_urls)
             self.t.start()
         else:  # If it's supposed to stop
             self.start_stop_button['text'] = "Start"
