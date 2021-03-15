@@ -1,3 +1,4 @@
+import os
 import time
 import datetime
 import threading
@@ -8,7 +9,6 @@ from selenium.webdriver.common.keys import Keys
 
 from conversions import *
 from alarm import *
-from os import system
 
 import pandas as pd
 from selenium import webdriver
@@ -45,6 +45,7 @@ class Crawler(Subject):
     previousFrames = []
     chrome_options = Options()
     _observers: List[Observer] = []
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
     testingUrl = 'https://eu.tamrieltradecentre.com/pc/Trade/SearchResult?SearchType=Sell&ItemID=&ItemNamePattern=Mother%27s+Sorrow&ItemCategory1ID=1&ItemCategory2ID=2&ItemCategory3ID=18&ItemTraitID=13&ItemQualityID=&IsChampionPoint=true&IsChampionPoint=false&LevelMin=160&LevelMax=&MasterWritVoucherMin=&MasterWritVoucherMax=&AmountMin=&AmountMax=&PriceMin=&PriceMax=20000'
     fastChangingUrl = 'https://eu.tamrieltradecentre.com/pc/Trade/SearchResult?SearchType=Sell&ItemID=&ItemNamePattern=mother%27s+sorrow&ItemCategory1ID=&ItemTraitID=&ItemQualityID=&IsChampionPoint=false&LevelMin=&LevelMax=&MasterWritVoucherMin=&MasterWritVoucherMax=&AmountMin=&AmountMax=&PriceMin=&PriceMax='
@@ -53,10 +54,10 @@ class Crawler(Subject):
         self.searchUrl = url
 
         # Local chrome folder
-        self.chrome_options.binary_location = 'ChromeStandalone/App/Chrome-bin/chrome.exe'
+        self.chrome_options.binary_location = self.ROOT_DIR + '/ChromeStandalone/App/Chrome-bin/chrome.exe'
 
         # Setting up a Chrome session
-        debug = False
+        debug = True
         if not debug:
             self.chrome_options.add_argument('--headless')
             self.chrome_options.add_argument('--no-sandbox')
@@ -64,7 +65,7 @@ class Crawler(Subject):
             print("*parameters applied*")
 
         # Create a new Chrome session
-        self.driver = webdriver.Chrome('chromedriver.exe', options=self.chrome_options)
+        self.driver = webdriver.Chrome(self.ROOT_DIR +'/chromedriver.exe', options=self.chrome_options)
 
     def open_pages(self):
         """Method that opens all the urls in the chrome browser"""
@@ -106,6 +107,7 @@ class Crawler(Subject):
     def request_items_from_urls(self):
         """Method that requests items from all tabs"""
         self.running = True
+        self.open_pages()
         while self.running is True:
             # pull-left load spinner
             WebDriverWait(self.driver, 60).until(
@@ -113,7 +115,7 @@ class Crawler(Subject):
             time.sleep(5)
             content, found = self.request_item(0)
             self.notify()
-            # print(content[0])
+            print(content[0])
             for i in range(1, len(self.urlArray)):
                 self.driver.switch_to.window(self.driver.window_handles[i])
                 WebDriverWait(self.driver, 60).until(
@@ -121,12 +123,12 @@ class Crawler(Subject):
                 time.sleep(5)
                 try:
                     content, found = self.request_item(i)
-                    # print(content[0])
+                    print(content[0])
                 except KeyError:
                     content = None
                     found = -1
                 self.notify()
-                # print("\n- Either no items were found, or the page failed to load in time. -\n")
+                print("\n- Either no items were found, or the page failed to load in time. -\n")
                 # here we should send it over to the gui
             self.driver.switch_to.window(self.driver.window_handles[0])
             time.sleep(2)

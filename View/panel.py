@@ -2,16 +2,22 @@ from tkinter import *
 from tkinter import ttk
 from tab import Tab
 
+from crawler import Crawler
 from observer_paradigm import Observer, Subject
 
+import threading
 
 class TTCc_GUI(Observer):
-    def __init__(self, master):
+    t = None
+
+    def __init__(self, master, crawler):
         self.master = master
         self.master.title("TCCcrawler")
 
         self.buttons_frame = Frame(master)
         self.buttons_frame.pack(side=TOP)
+
+        self.crawler = crawler
 
         # Start/Stop searches in all tabs
         self.start_stop_button = Button(self.buttons_frame, text="Start", command=self.start_action)
@@ -39,7 +45,10 @@ class TTCc_GUI(Observer):
             url_list = []
             for tab in self.tab_list:
                 url_list.append(tab.url_field.get())
-                print(tab.url_field.get())
+                # print(tab.url_field.get())
+            self.crawler.add_url(urls = url_list)
+            self.t = threading.Thread(target=self.crawler.request_items_from_urls())
+            self.t.start()
         else:  # If it's supposed to stop
             self.start_stop_button['text'] = "Start"
 
@@ -52,5 +61,6 @@ class TTCc_GUI(Observer):
 
 
 root = Tk()
-my_gui = TTCc_GUI(root)
+crawler = Crawler()
+my_gui = TTCc_GUI(root, crawler)
 root.mainloop()
