@@ -88,6 +88,10 @@ class Crawler(Subject):
         if self.running is False:
             self.urlArray.append(url)
 
+    def add_url(self, urls: []):
+        """Method that adds a url to the url array"""
+        self.urlArray = urls
+
     def delete_url(self, position):
         """Method that removes a url from the url array"""
         if self.running is False:
@@ -103,39 +107,35 @@ class Crawler(Subject):
         """Method that requests items from all tabs"""
         self.running = True
         while self.running is True:
-            #time.sleep(5)
             # pull-left load spinner
             WebDriverWait(self.driver, 60).until(
                 ExpectedConditions.invisibility_of_element_located((By.CLASS_NAME, "pull-left load spinner")))
-            #WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located((By.ID, 'search-result-view')))
             time.sleep(5)
             content, found = self.request_item(0)
-            print(content[0])
-            # here we should send it over to the gui
-            # writer.send(content, found, 0)
+            self.notify()
+            # print(content[0])
             for i in range(1, len(self.urlArray)):
                 self.driver.switch_to.window(self.driver.window_handles[i])
                 WebDriverWait(self.driver, 60).until(
                     ExpectedConditions.invisibility_of_element_located((By.CLASS_NAME, "pull-left load spinner")))
                 time.sleep(5)
-                #WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located((By.ID, 'search-result-view')))
                 try:
                     content, found = self.request_item(i)
-                    print(content[0])
+                    # print(content[0])
                 except KeyError:
-                    print("\n- Either no items were found, or the page failed to load in time. -\n")
+                    content = None
+                    found = -1
+                self.notify()
+                # print("\n- Either no items were found, or the page failed to load in time. -\n")
                 # here we should send it over to the gui
-                # writer.send(content, found, i)
             self.driver.switch_to.window(self.driver.window_handles[0])
-            print("------------------------------")
             time.sleep(2)
             self.refresh_pages()
         # Clearing saved data frames
         self.previousFrames = []
-
+        self.urlArray = []
 
     def request_item(self, position:int):
-
         # read all tables from html
         content = []
         found = False
