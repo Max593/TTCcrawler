@@ -109,6 +109,7 @@ class Crawler:
             content, found = self.request_item(0)
             print(content[0])
             # here we should send it over to the gui
+            # writer.send(content, found, 0)
             for i in range(1, len(self.urlArray)):
                 self.driver.switch_to.window(self.driver.window_handles[i])
                 WebDriverWait(self.driver, 60).until(
@@ -121,6 +122,7 @@ class Crawler:
                 except KeyError:
                     print("\n- Either no items were found, or the page failed to load in time. -\n")
                 # here we should send it over to the gui
+                # writer.send(content, found, i)
             self.driver.switch_to.window(self.driver.window_handles[0])
             print("------------------------------")
             time.sleep(2)

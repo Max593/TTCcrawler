@@ -45,8 +45,8 @@ class TTCc_GUI:
         # self.start_stop_button['text'] = "Updated Text" # How to change button text
         self.start_stop_button.pack(side=LEFT, padx=5, pady=5)
 
-        self.test_button = Button(self.buttons_frame, text="New Tab", command=self.new_tab)
-        self.test_button.pack(side=LEFT, padx=5, pady=5)
+        self.new_tab_button = Button(self.buttons_frame, text="New Tab", command=self.new_tab)
+        self.new_tab_button.pack(side=LEFT, padx=5, pady=5)
 
         self.compose_url_button = Button(self.buttons_frame, text="Compose URL")
         self.compose_url_button.pack(side=RIGHT, padx=5, pady=5)
