@@ -2,8 +2,9 @@ from tkinter import *
 
 
 class Tab:
-    def __init__(self, tab_frame, title="New Tab"):
+    def __init__(self, tab_frame, tab_list: [], title="New Tab"):
         self.tab_frame = tab_frame
+        self.tab_list = tab_list  # tab list from panel, used to remove itself on tab delete
         tab = Frame(self.tab_frame)
         tab.pack(expand=True, fill=BOTH)
         self.tab_frame.add(tab, text=title)
@@ -29,6 +30,7 @@ class Tab:
         delete_tab_button.pack(side=RIGHT)
 
     def deleteTab(self):
+        self.tab_list.remove(self)
         self.tab_frame.forget(self.tab_frame.select())
 
     def write_txt_field(self, content):

@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import ttk
-from .tab import Tab
+from tab import Tab
 
 from observer_paradigm import Observer, Subject
 
@@ -14,7 +14,7 @@ class TTCc_GUI(Observer):
         self.buttons_frame.pack(side=TOP)
 
         # Start/Stop searches in all tabs
-        self.start_stop_button = Button(self.buttons_frame, text="Start")
+        self.start_stop_button = Button(self.buttons_frame, text="Start", command=self.start_action)
         # self.start_stop_button['text'] = "Updated Text" # How to change button text
         self.start_stop_button.pack(side=LEFT, padx=5, pady=5)
 
@@ -28,15 +28,28 @@ class TTCc_GUI(Observer):
         self.tab_frame.pack(expand=True, fill=BOTH, pady=10, padx=10)
 
         self.tab_list = []  # Will contain all the tabs created for recovery purposes
-        self.base_tab = Tab(self.tab_frame, "Base Tab")  # Default Tab, might be removed in the future
+        self.base_tab = Tab(self.tab_frame, self.tab_list, "Base Tab")  # Default Tab, might be removed in the future
         self.tab_list.append(self.base_tab)
+
+    def start_action(self):
+        # Changes the button appearance
+        if self.start_stop_button['text'] == "Start":  # If it's supposed to start
+            self.start_stop_button['text'] = "Stop"
+            # Gathering urls
+            url_list = []
+            for tab in self.tab_list:
+                url_list.append(tab.url_field.get())
+                print(tab.url_field.get())
+        else:  # If it's supposed to stop
+            self.start_stop_button['text'] = "Start"
 
     def new_tab(self):
         # Tabs have a temporary name for identification
-        self.tab_list.append(Tab(self.tab_frame, f"Tab {self.tab_frame.tabs()[-1]}"))
+        self.tab_list.append(Tab(self.tab_frame, self.tab_list, f"Tab {self.tab_frame.tabs()[-1]}"))
 
     def update(self, subject: Subject) -> None:
         print("ConcreteObserverA: Reacted to the event")
+
 
 root = Tk()
 my_gui = TTCc_GUI(root)
