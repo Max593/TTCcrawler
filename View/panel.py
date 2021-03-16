@@ -63,6 +63,7 @@ class TTCc_GUI(Observer):
         print(self.crawler.urlArray)
         print("Reacted to the event")
         if self.crawler.content is not None:
+            self.tab_list[self.crawler.position].text_field.insert(END, "\n")
             self.tab_list[self.crawler.position].text_field.insert(END, self.crawler.content[0])
             print("Found = ", self.crawler.found)
             if self.crawler.found is True:

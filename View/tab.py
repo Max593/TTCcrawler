@@ -18,8 +18,11 @@ class Tab:
         # Url field and "terminal view" text field
         self.url_field = Entry(top_Frame, widt=150)
         self.url_field.pack(side=LEFT, fill='x', padx=10)
-        self.text_field = Text(bottom_Frame)
+        hScrollBar = Scrollbar(bottom_Frame, orient=HORIZONTAL)
+        self.text_field = Text(bottom_Frame, wrap=NONE, xscrollcommand=hScrollBar.set)
+        hScrollBar.pack(side=BOTTOM, fill=X)
         self.text_field.pack(side=BOTTOM, expand=True, fill=BOTH)
+        hScrollBar.config(command=self.text_field.xview)
 
         # Delete button, might be disabled if there's only 1 tab
         delete_tab_button = Button(top_Frame, text="Delete Tab", command=self.deleteTab)
