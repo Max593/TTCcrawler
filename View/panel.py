@@ -7,6 +7,7 @@ from observer_paradigm import Observer, Subject
 
 import threading
 
+
 class TTCc_GUI(Observer):
     t = None
 
@@ -60,6 +61,8 @@ class TTCc_GUI(Observer):
     def update(self, subject: Subject) -> None:
         print(self.crawler.urlArray)
         print("Reacted to the event")
+        #self.crawler.content
+
 
 
 root = Tk()

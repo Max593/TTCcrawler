@@ -44,6 +44,9 @@ class Crawler(Subject):
     urlArray = []
     previousFrames = []
     chrome_options = Options()
+    content = None
+    found = False
+    position = -1
     _observers: List[Observer] = []
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -113,22 +116,28 @@ class Crawler(Subject):
             WebDriverWait(self.driver, 60).until(
                 ExpectedConditions.invisibility_of_element_located((By.CLASS_NAME, "pull-left load spinner")))
             time.sleep(5)
-            content, found = self.request_item(0)
+            self.position = 0
+            try:
+                self.content, self.found = self.request_item(0)
+            except KeyError:
+                self.content = None
+                self.found = False
             self.notify()
-            print(content[0])
+            #print(content[0])
             for i in range(1, len(self.urlArray)):
                 self.driver.switch_to.window(self.driver.window_handles[i])
                 WebDriverWait(self.driver, 60).until(
                     ExpectedConditions.invisibility_of_element_located((By.CLASS_NAME, "pull-left load spinner")))
                 time.sleep(5)
+                self.position = i
                 try:
-                    content, found = self.request_item(i)
-                    print(content[0])
+                    self.content, self.found = self.request_item(i)
+                    #print(content[0])
                 except KeyError:
-                    content = None
-                    found = -1
+                    self.content = None
+                    self.found = False
                 self.notify()
-                print("\n- Either no items were found, or the page failed to load in time. -\n")
+                #print("\n- Either no items were found, or the page failed to load in time. -\n")
                 # here we should send it over to the gui
             self.driver.switch_to.window(self.driver.window_handles[0])
             time.sleep(2)
@@ -139,8 +148,8 @@ class Crawler(Subject):
 
     def request_item(self, position:int):
         # read all tables from html
-        content = []
-        found = False
+        self.content = []
+        self.found = False
         soup = BeautifulSoup(self.driver.page_source, 'lxml')
         tables = soup.find_all('table')
         dfs = pd.read_html(str(tables))
@@ -168,7 +177,7 @@ class Crawler(Subject):
         pageFrames["Last Seen Minutes"] = last_seen_minutes
 
         # Pretty printing
-        content.append(pageFrames)
+        self.content.append(pageFrames)
         #print("\n\n*-----------------------------------------------------*")
         #display(pageFrames)
         # This check is to see if it has any previous data to compare it to
@@ -177,11 +186,11 @@ class Crawler(Subject):
             #print("\n-------------------------------------------------------")
             if resultFrames.empty is False:
                 # display new items
-                content.append(resultFrames)
+                self.content.append(resultFrames)
                 #display(resultFrames)
 
                 # notify
-                found = True
+                self.found = True
                 sound = threading.Thread(target=sound_alarm())
                 sound.start()
                 sound.join()
@@ -191,7 +200,7 @@ class Crawler(Subject):
         # print("\n*-----------------------------------------------------*\n\n\n")
         # update previous dataframe for comparison
         self.previousFrames.insert(position, pageFrames)
-        return content, found
+        return self.content, self.found
         # close browser
         # self.driver.quit()
 
