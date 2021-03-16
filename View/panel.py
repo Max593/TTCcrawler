@@ -18,6 +18,7 @@ class TTCc_GUI(Observer):
         self.buttons_frame.pack(side=TOP)
 
         self.crawler = crawler
+        self.crawler.attach(self)
 
         # Start/Stop searches in all tabs
         self.start_stop_button = Button(self.buttons_frame, text="Start", command=self.start_action)
@@ -57,7 +58,8 @@ class TTCc_GUI(Observer):
         self.tab_list.append(Tab(self.tab_frame, self.tab_list, f"Tab {self.tab_frame.tabs()[-1]}"))
 
     def update(self, subject: Subject) -> None:
-        print("ConcreteObserverA: Reacted to the event")
+        print(self.crawler.urlArray)
+        print("Reacted to the event")
 
 
 root = Tk()
