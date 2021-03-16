@@ -1,5 +1,6 @@
 from pydub import AudioSegment
 from pydub.playback import play
+import os
 
 # Plays sound to attract the user's attention in case he is not looking at the console.
 def sound_alarm():

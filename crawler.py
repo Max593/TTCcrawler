@@ -145,7 +145,7 @@ class Crawler(Subject):
         self.previousFrames = []
         self.urlArray = []
 
-    def request_item(self, position:int):
+    def request_item(self, position: int):
         # read all tables from html
         content = []
         found = False
@@ -180,10 +180,14 @@ class Crawler(Subject):
         #print("\n\n*-----------------------------------------------------*")
         #display(pageFrames)
         # This check is to see if it has any previous data to compare it to
+        print("Length of frames ", len(self.previousFrames))
+        print("Length of url array ", len(self.urlArray))
         if len(self.previousFrames) == len(self.urlArray):
+            print("Can compare")
             resultFrames = dataframe_difference(pageFrames, self.previousFrames[position], which='left_only')
             #print("\n-------------------------------------------------------")
             if resultFrames.empty is False:
+                print("Found new")
                 # display new items
                 content.append(resultFrames)
                 #display(resultFrames)
@@ -193,9 +197,11 @@ class Crawler(Subject):
             else:
                 # timestamp to notify the user when was the last time a request took place
                 print("No new queries found in this search. ", datetime.datetime.now())
+            self.previousFrames[position] = pageFrames
+        else:
+            self.previousFrames.insert(position, pageFrames)
         # print("\n*-----------------------------------------------------*\n\n\n")
         # update previous dataframe for comparison
-        self.previousFrames.insert(position, pageFrames)
         return content, found
         # close browser
         # self.driver.quit()
