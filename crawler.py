@@ -35,8 +35,8 @@ def synchronized_method(method):
 
     return sync_method
 
-class Crawler(Subject):
 
+class Crawler(Subject):
     # Initiating null variables
     searchUrl = None
     driver = None

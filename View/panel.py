@@ -61,8 +61,12 @@ class TTCc_GUI(Observer):
     def update(self, subject: Subject) -> None:
         print(self.crawler.urlArray)
         print("Reacted to the event")
-        #self.crawler.content
-
+        if self.crawler.content is not None:
+            self.tab_list[self.crawler.position].text_field.insert(END, self.crawler.content[0])
+            if self.crawler.found is True:
+                self.tab_list[self.crawler.position].text_field.insert(END, "\n\n"+self.crawler.content[1])
+        else:
+            self.tab_list[self.crawler.position].text_field.insert(END, "\nNo items found.\n")
 
 
 root = Tk()
