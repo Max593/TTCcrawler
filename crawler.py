@@ -8,7 +8,6 @@ from selenium.webdriver.support import expected_conditions as ExpectedConditions
 from selenium.webdriver.common.keys import Keys
 
 from conversions import *
-from alarm import *
 
 import pandas as pd
 from selenium import webdriver
@@ -148,8 +147,8 @@ class Crawler(Subject):
 
     def request_item(self, position:int):
         # read all tables from html
-        self.content = []
-        self.found = False
+        content = []
+        found = False
         soup = BeautifulSoup(self.driver.page_source, 'lxml')
         tables = soup.find_all('table')
         dfs = pd.read_html(str(tables))
@@ -177,7 +176,7 @@ class Crawler(Subject):
         pageFrames["Last Seen Minutes"] = last_seen_minutes
 
         # Pretty printing
-        self.content.append(pageFrames)
+        content.append(pageFrames)
         #print("\n\n*-----------------------------------------------------*")
         #display(pageFrames)
         # This check is to see if it has any previous data to compare it to
@@ -186,21 +185,18 @@ class Crawler(Subject):
             #print("\n-------------------------------------------------------")
             if resultFrames.empty is False:
                 # display new items
-                self.content.append(resultFrames)
+                content.append(resultFrames)
                 #display(resultFrames)
 
                 # notify
-                self.found = True
-                sound = threading.Thread(target=sound_alarm())
-                sound.start()
-                sound.join()
+                found = True
             else:
                 # timestamp to notify the user when was the last time a request took place
                 print("No new queries found in this search. ", datetime.datetime.now())
         # print("\n*-----------------------------------------------------*\n\n\n")
         # update previous dataframe for comparison
         self.previousFrames.insert(position, pageFrames)
-        return self.content, self.found
+        return content, found
         # close browser
         # self.driver.quit()
 

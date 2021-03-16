@@ -4,6 +4,7 @@ from tab import Tab
 
 from crawler import Crawler
 from observer_paradigm import Observer, Subject
+from alarm import *
 
 import threading
 
@@ -63,11 +64,16 @@ class TTCc_GUI(Observer):
         print("Reacted to the event")
         if self.crawler.content is not None:
             self.tab_list[self.crawler.position].text_field.insert(END, self.crawler.content[0])
+            print("Found = ", self.crawler.found)
             if self.crawler.found is True:
-                self.tab_list[self.crawler.position].text_field.insert(END, "\n\n"+self.crawler.content[1])
+                self.tab_list[self.crawler.position].text_field.insert(END, '\n\n')
+                self.tab_list[self.crawler.position].text_field.insert(END, self.crawler.content[1])
+                sound = threading.Thread(target=sound_alarm())
+                sound.start()
+                sound.join()
         else:
             self.tab_list[self.crawler.position].text_field.insert(END, "\nNo items found.\n")
-
+        self.tab_list[self.crawler.position].text_field.see(END)
 
 root = Tk()
 crawler = Crawler()
