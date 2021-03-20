@@ -1,4 +1,6 @@
 from tkinter import *
+from PIL import ImageTk, Image
+
 
 
 class Tab:
@@ -7,7 +9,16 @@ class Tab:
         self.tab_list = tab_list  # tab list from panel, used to remove itself on tab delete
         self.tab = Frame(self.tab_frame)
         self.tab.pack(expand=True, fill=BOTH)
-        self.tab_frame.add(self.tab, text=title)
+
+        # setting up alert image and title
+        image = Image.open('Assets/alert.png')
+        self.alert_image = ImageTk.PhotoImage(image)
+        image = Image.open('Assets/no_alert.png')
+        self.no_alert_image = ImageTk.PhotoImage(image)
+        self.title = title
+
+        # creating tab
+        self.tab_frame.add(self.tab, text=self.title, image=self.no_alert_image, compound="left")
 
         # Frames
         top_Frame = Frame(self.tab)
@@ -44,15 +55,24 @@ class Tab:
             index_start = url.find("=") + 1
             index_end = url.find("&")
             url = url[index_start:index_end].replace("+", " ").replace("%27", "'")
-            self.tab_frame.tab(self.tab, text=url)
+            self.title = url
+            self.tab_frame.tab(self.tab, text=self.title)
         except ValueError:
             index = url.find("ItemID=")
             url = url[index:]
             index_start = url.find("=") + 1
             index_end = url.find("&")
             url = url[index_start:index_end]
-            self.tab_frame.tab(self.tab, text=url)
+            self.title = url
+            self.tab_frame.tab(self.tab, text=self.title)
 
+
+    def tab_notify(self):
+        self.tab_frame.tab(self.tab, text=self.title, image=self.alert_image, compound="left")
+
+
+    def tab_cancel_notify(self):
+        self.tab_frame.tab(self.tab, text=self.title, image=self.no_alert_image, compound="left")
 
     def write_txt_field(self, content):
         self.text_field.insert(END, content)

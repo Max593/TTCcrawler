@@ -9,6 +9,7 @@ from alarm import *
 import threading
 
 
+
 class TTCc_GUI(Observer):
     t = None
 
@@ -35,6 +36,7 @@ class TTCc_GUI(Observer):
 
         self.tab_frame = ttk.Notebook(master)
         self.tab_frame.pack(expand=True, fill=BOTH, pady=10, padx=10)
+
 
         self.tab_list = []  # Will contain all the tabs created for recovery purposes
         self.base_tab = Tab(self.tab_frame, self.tab_list, "Base Tab")  # Default Tab, might be removed in the future
@@ -73,6 +75,10 @@ class TTCc_GUI(Observer):
                 sound = threading.Thread(target=sound_alarm())
                 sound.start()
                 sound.join()
+                self.tab_list[self.crawler.position].tab_notify()
+            else:
+                if self.tab_frame.index(self.tab_frame.select()) == self.crawler.position:
+                    self.tab_list[self.crawler.position].tab_cancel_notify()
         else:
             self.tab_list[self.crawler.position].text_field.insert(END, "\nNo items found.\n")
         self.tab_list[self.crawler.position].text_field.see(END)
