@@ -47,8 +47,9 @@ class TTCc_GUI(Observer):
             # Gathering urls
             url_list = []
             for tab in self.tab_list:
-                url_list.append(tab.url_field.get())
-                # print(tab.url_field.get())
+                url = tab.url_field.get()
+                tab.tab_retitle(url)
+                url_list.append(url)
             self.crawler.add_url(urls = url_list)
             self.t = threading.Thread(target=self.crawler.request_items_from_urls)
             self.t.start()

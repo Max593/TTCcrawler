@@ -5,14 +5,14 @@ class Tab:
     def __init__(self, tab_frame, tab_list: [], title="New Tab"):
         self.tab_frame = tab_frame
         self.tab_list = tab_list  # tab list from panel, used to remove itself on tab delete
-        tab = Frame(self.tab_frame)
-        tab.pack(expand=True, fill=BOTH)
-        self.tab_frame.add(tab, text=title)
+        self.tab = Frame(self.tab_frame)
+        self.tab.pack(expand=True, fill=BOTH)
+        self.tab_frame.add(self.tab, text=title)
 
         # Frames
-        top_Frame = Frame(tab)
+        top_Frame = Frame(self.tab)
         top_Frame.pack(side=TOP, padx=10, pady=5)
-        bottom_Frame = Frame(tab)
+        bottom_Frame = Frame(self.tab)
         bottom_Frame.pack(side=BOTTOM, expand=True, fill=BOTH, padx=10, pady=5)
 
         # Url field and "terminal view" text field
@@ -35,6 +35,15 @@ class Tab:
     def deleteTab(self):
         self.tab_list.remove(self)
         self.tab_frame.forget(self.tab_frame.select())
+
+    def tab_retitle(self, url: str):
+        index = url.find("ItemNamePattern=")
+        url = url[index:]
+        index_start = url.find("=")+1
+        index_end = url.find("&")
+        url = url[index_start:index_end].replace("+", " ").replace("%27", "'")
+        self.tab_frame.tab(self.tab, text=url)
+
 
     def write_txt_field(self, content):
         self.text_field.insert(END, content)
