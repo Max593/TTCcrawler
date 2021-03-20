@@ -50,7 +50,7 @@ class TTCc_GUI(Observer):
                 url = tab.url_field.get()
                 tab.tab_retitle(url)
                 url_list.append(url)
-            self.crawler.add_url(urls = url_list)
+            self.crawler.add_url(urls=url_list)
             self.t = threading.Thread(target=self.crawler.request_items_from_urls)
             self.t.start()
         else:  # If it's supposed to stop

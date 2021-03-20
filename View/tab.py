@@ -37,12 +37,21 @@ class Tab:
         self.tab_frame.forget(self.tab_frame.select())
 
     def tab_retitle(self, url: str):
-        index = url.find("ItemNamePattern=")
-        url = url[index:]
-        index_start = url.find("=")+1
-        index_end = url.find("&")
-        url = url[index_start:index_end].replace("+", " ").replace("%27", "'")
-        self.tab_frame.tab(self.tab, text=url)
+        try:
+            url.index("ItemNamePattern=")
+            index = url.find("ItemNamePattern=")
+            url = url[index:]
+            index_start = url.find("=") + 1
+            index_end = url.find("&")
+            url = url[index_start:index_end].replace("+", " ").replace("%27", "'")
+            self.tab_frame.tab(self.tab, text=url)
+        except ValueError:
+            index = url.find("ItemID=")
+            url = url[index:]
+            index_start = url.find("=") + 1
+            index_end = url.find("&")
+            url = url[index_start:index_end]
+            self.tab_frame.tab(self.tab, text=url)
 
 
     def write_txt_field(self, content):
