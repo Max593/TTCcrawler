@@ -175,8 +175,11 @@ class Crawler(Subject):
             last_seen_minutes.append(time_to_int(last_seen))
         pageFrames["Last Seen Minutes"] = last_seen_minutes
 
+        printFrame = pageFrames.copy(deep=True)
+        printFrame.drop(['Last Seen', 'Final Price'], axis=1, inplace=True)
+        printFrame = printFrame.to_string(index=False)
         # Pretty printing
-        content.append(pageFrames)
+        content.append(printFrame)
         #print("\n\n*-----------------------------------------------------*")
         #display(pageFrames)
         # This check is to see if it has any previous data to compare it to
